@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -62,9 +63,33 @@ func postTarefa(c *gin.Context) {
 	var tarefa Tarefa
 	c.BindJSON(&tarefa)
 
-	tarefa.ID = len(tarefas) + 1
+	tarefa.ID = generateUniqueID()
 	tarefas = append(tarefas, tarefa)
 	c.JSON(http.StatusCreated, tarefa)
+}
+
+func generateUniqueID() int {
+	var ids []int
+	for _, t := range tarefas {
+		ids = append(ids, t.ID)
+	}
+
+	for {
+		numeroAleatorio := rand.Intn(1000)
+
+		found := false
+		for _, id := range ids {
+			if id == numeroAleatorio {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			return numeroAleatorio
+		}
+	}
+
 }
 
 func deleteTarefa(c *gin.Context) {
