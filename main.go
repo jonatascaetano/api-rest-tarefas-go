@@ -33,6 +33,7 @@ func getRouter(r *gin.Engine) *gin.Engine {
 	rotasTarefa.GET("", getTarefas)
 	rotasTarefa.GET("/:id", getTarefaById)
 	rotasTarefa.POST("", postTarefa)
+	rotasTarefa.DELETE("/:id", deleteTarefa)
 	return r
 }
 
@@ -63,4 +64,21 @@ func postTarefa(c *gin.Context) {
 	tarefa.ID = len(tarefas) + 1
 	tarefas = append(tarefas, tarefa)
 	c.JSON(http.StatusCreated, tarefa)
+}
+
+func deleteTarefa(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	for index, tarefa := range tarefas {
+		if tarefa.ID == id {
+			tarefas = append(tarefas[:index], tarefas[index+1:]...)
+			break
+		}
+	}
+
+	c.Status(http.StatusNoContent)
 }
