@@ -32,6 +32,7 @@ func getRouter(r *gin.Engine) *gin.Engine {
 	rotasTarefa := r.Group("/tarefas")
 	rotasTarefa.GET("", getTarefas)
 	rotasTarefa.GET("/:id", getTarefaById)
+	rotasTarefa.POST("", postTarefa)
 	return r
 }
 
@@ -53,4 +54,13 @@ func getTarefaById(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusNotFound, gin.H{"error": "Tarefa não encontrada"})
+}
+
+func postTarefa(c *gin.Context) {
+	var tarefa Tarefa
+	c.BindJSON(&tarefa)
+
+	tarefa.ID = len(tarefas) + 1
+	tarefas = append(tarefas, tarefa)
+	c.JSON(http.StatusCreated, tarefa)
 }
