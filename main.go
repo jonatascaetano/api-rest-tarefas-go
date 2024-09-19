@@ -83,7 +83,6 @@ func deleteTarefa(c *gin.Context) {
 
 	c.Status(http.StatusNoContent)
 }
-
 func putTarefa(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -94,13 +93,21 @@ func putTarefa(c *gin.Context) {
 	var tarefa Tarefa
 	c.BindJSON(&tarefa)
 
+	tarefaEncontrada := false
 	for index, tarefaAtual := range tarefas {
 		if tarefaAtual.ID == id {
 			tarefas[index].Title = tarefa.Title
 			tarefas[index].Body = tarefa.Body
 			tarefas[index].Done = tarefa.Done
+			tarefaEncontrada = true
+			tarefa = tarefas[index]
 			break
 		}
+	}
+
+	if !tarefaEncontrada {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tarefa não encontrada"})
+		return
 	}
 
 	c.JSON(http.StatusOK, tarefa)
