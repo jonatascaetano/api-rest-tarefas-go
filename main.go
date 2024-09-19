@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,5 +28,11 @@ func main() {
 }
 
 func getRouter(r *gin.Engine) *gin.Engine {
+	rotasTarefa := r.Group("/tarefas")
+	rotasTarefa.GET("", getTarefas)
 	return r
+}
+
+func getTarefas(c *gin.Context) {
+	c.JSON(http.StatusOK, tarefas)
 }
